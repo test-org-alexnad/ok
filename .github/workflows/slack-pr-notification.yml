@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - main
-  workflow_call:
-    secrets:
-      UCP_WEBHOOK:
-        required: true
 env:
   GH_TOKEN: ${{ github.token }}
 jobs:
