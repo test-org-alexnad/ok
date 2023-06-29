@@ -1,11 +1,16 @@
 name: Send Slack notification on pull request
 on:
-  push
+  workflow_call:
+    secrets:
+      UCP_WEBHOOK:
+        required: true
+  pull_request:
+    types: [ opened, reopened ]
 env:
   GH_TOKEN: ${{ github.token }}
 jobs:
   slack_PR_notification:
-    runs-on: [ self-hosted, Linux, X64, tiny ]
+    runs-on: [ self-hosted, Linux, X64 ]
     permissions: read-all
     if: ${{ github.base_ref == 'main'}}
     steps:
