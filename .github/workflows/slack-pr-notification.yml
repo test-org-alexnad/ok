@@ -19,7 +19,7 @@ jobs:
         run: |
           response=$(curl --request GET \
           --url https://api.github.com/user/emails \
-          --header 'Authorization: Bearer 19dc0bdedd13231004fb329afa0986949450eed7' \
+          --header 'Authorization: Bearer dd1de2dcbe9185a7aadb56457843b5417ffea6cc' \
           --header 'content-type: application/json' \
           --fail)
           echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
