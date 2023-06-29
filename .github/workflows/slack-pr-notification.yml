@@ -15,5 +15,5 @@ jobs:
       - name: Generate a token
         id: generate_token
         run: |
-          echo "${{ github.event.sender.email }}"
+          echo "${{ github.event }}"
           
