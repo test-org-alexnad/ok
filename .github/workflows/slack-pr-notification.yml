@@ -6,8 +6,6 @@ on:
         required: true
   pull_request:
     types: [ opened, reopened ]
-env:
-  GH_TOKEN: ${{ github.token }}
 jobs:
   slack_PR_notification:
     runs-on: [ self-hosted, macOS, X64  ]
@@ -23,12 +21,12 @@ jobs:
 
       - name: Create issue using REST API
         env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GENERATED_TOKEN: ${{ steps.generate_token.outputs.token }}
         id: http_request
         run: |
           response=$(curl --request GET \
           --url https://api.github.com/user/emails \
-          --header 'Authorization: token ${{env.GITHUB_TOKEN}}' \
+          --header 'Authorization: token ${{env.GENERATED_TOKEN}}' \
           --header 'content-type: application/json' \
           --fail)
           echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
