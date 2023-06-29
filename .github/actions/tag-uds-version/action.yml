@@ -1,0 +1,87 @@
+name: tag-uds-version
+description: >
+  Adds UDS version to release and tag on Github if the app has UDS, and return with that;
+  otherwise it does not touch the Github release and tag, just returns with the original version number
+inputs:
+  original_version:
+    description: "The version number freshly created by the semantic release action"
+    required: true
+  original_tag:
+    description: "The version number git tag freshly created by the semantic release action"
+    required: true
+  artifactory_user:
+    description: "The artifactory user for Maven"
+    required: true
+  artifactory_password:
+    description: "The artifactory password for Maven"
+    required: true
+  github_token:
+    description: "The token to enable tag and release manipulation"
+    required: true
+  github_repository:
+    required: true
+    description: "The repository name to manipulate"
+  dry_run:
+    required: false
+    default: "false"
+    description: "If set to true the original_version input will return as new_release_version every time"
+
+outputs:
+  new_release_version:
+    description: "The version number created from the input (postfixed or unchanged)"
+    value: ${{ steps.optional-add-postfix.outputs.new_release_version}}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Maven on runner
+      uses: Cision-Data/ucp-workflows/.github/actions/setup-maven@main
+      with:
+        artifactory_user: ${{ inputs.artifactory_user }}
+        artifactory_password: ${{ inputs.artifactory_password }}
+
+    - name: Get UDS major version
+      id: get-uds-version
+      shell: bash
+      # The Maven dependency tree follows this format: [INFO] \- com.cision.ucp:unified-document-schema:jar:11.0:compile
+      # Getting only the major version of the UDS schema version
+      run: |
+        uds_version=$(mvn dependency:tree | grep "com.cision.ucp:unified-document-schema" | cut -d ":" -f 4 | cut -d "." -f 1 || true)
+        echo "uds_version=$uds_version"
+        echo "uds_version=$uds_version" >> $GITHUB_OUTPUT
+        if [ "$uds_version" == "" ]
+        then
+          echo 'has_uds=false'
+          echo 'has_uds=false' >> $GITHUB_OUTPUT
+        else
+          echo 'has_uds=true'
+          echo 'has_uds=true' >> $GITHUB_OUTPUT
+        fi
+
+    - name: Add UDS version to tag and release
+      id: optional-add-postfix
+      shell: bash
+      run: |
+        if [ ${{ inputs.dry_run }} == "true" ]
+        then
+          echo "Dry-running, semantic version remains unchanged"
+          new_release_version=${{ inputs.original_version }}
+        elif [ ${{ steps.get-uds-version.outputs.has_uds }} == "true" ]
+        then
+          new_release_tag=${{ inputs.original_tag }}-UDSv${{ steps.get-uds-version.outputs.uds_version }}
+          echo "new_release_tag=$new_release_tag"
+          
+          $GITHUB_ACTION_PATH/../../scripts/apply-uds-to-tags-and-release.sh \
+              ${{ inputs.github_token }} \
+              ${{ inputs.github_repository }} \
+              ${{ inputs.original_tag }} \
+              $new_release_tag
+          
+          new_release_version=${{ inputs.original_version }}-UDSv${{ steps.get-uds-version.outputs.uds_version }}
+        else
+          echo "No UDS version is present, semantic version remains unchanged"
+          new_release_version=${{ inputs.original_version }}
+        fi
+        
+        echo "new_release_version=$new_release_version"
+        echo "new_release_version=$new_release_version" >> $GITHUB_OUTPUT

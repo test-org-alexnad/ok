@@ -1,0 +1,100 @@
+name: setup-maven
+description: Sets up Java, Maven and Maven settings
+inputs:
+  artifactory_user:
+      description: "The artifactory user for Maven"
+      required: true
+  artifactory_password:
+     description: "The artifactory password for Maven"
+     required: true
+
+runs:
+    using: "composite"
+    steps:
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: 'maven'
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.8.2
+
+      - name: maven-settings-xml-action
+        id: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          repositories: >
+            [
+              {
+                "id": "trendkite-release",
+                "name": "trendkite-release",
+                "url": "https://trendkite.jfrog.io/artifactory/libs-release",
+                "releases": {
+                  "enabled": "true",
+                  "updatePolicy": "always",
+                  "checksumPolicy": "fail"
+                },
+                "snapshots": {
+                  "enabled": "false"
+                }
+              },
+              {
+                  "id": "trendkite-snapshots",
+                  "name": "trendkite-snapshots",
+                  "url": "https://trendkite.jfrog.io/artifactory/libs-snapshot",
+                  "releases": {
+                    "enabled": "false"
+                  },
+                  "snapshots": {
+                    "enabled": "true",
+                    "updatePolicy": "always",
+                    "checksumPolicy": "fail"
+                  }
+              }
+            ]
+          plugin_repositories: >
+            [
+              {
+                "id": "trendkite-release",
+                "name": "plugins-release",
+                "url": "https://trendkite.jfrog.io/artifactory/plugins-release",
+                "releases": {
+                  "enabled": "true",
+                  "updatePolicy": "never",
+                  "checksumPolicy": "fail"
+                },
+                "snapshots": {
+                  "enabled": "false"
+                }
+              },
+              {
+                  "id": "trendkite-snapshots",
+                  "name": "plugins-snapshot",
+                  "url": "https://trendkite.jfrog.io/artifactory/plugins-snapshot",
+                  "releases": {
+                    "enabled": "false"
+                  },
+                  "snapshots": {
+                    "enabled": "true",
+                    "updatePolicy": "always",
+                    "checksumPolicy": "fail"
+                  }
+                }
+            ]
+          servers: >
+            [
+              {
+                "id": "trendkite-release",
+                "username": "${{ inputs.artifactory_user }}",
+                "password": "${{ inputs.artifactory_password }}"
+              },
+              {
+                "id": "trendkite-snapshots",
+                "username": "${{ inputs.artifactory_user }}",
+                "password": "${{ inputs.artifactory_password }}"
+              }
+            ]

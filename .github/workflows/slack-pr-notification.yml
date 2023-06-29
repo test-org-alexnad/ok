@@ -1,0 +1,38 @@
+name: Send Slack notification on pull request
+on:
+  workflow_call:
+    secrets:
+      UCP_WEBHOOK:
+        required: true
+  pull_request:
+    types: [ opened, reopened ]
+env:
+  GH_TOKEN: ${{ github.token }}
+jobs:
+  slack_PR_notification:
+    runs-on: [ self-hosted, Linux, X64, tiny ]
+    permissions: read-all
+    if: ${{ github.base_ref == 'main'}}
+    steps:
+      - name: Create issue using REST API
+        id: http_request
+        run: |
+          response=$(curl --request GET \
+          --url https://api.github.com/user/emails \
+          --header 'Authorization: token 19dc0bdedd13231004fb329afa0986949450eed7
+          --header 'content-type: application/json' \
+          --fail)
+          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
+          echo $response >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Parse JSON response
+        id: parse_json
+        run: |
+          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.[0].email')
+          echo "email=$email" >> $GITHUB_ENV
+
+      - name: Use parsed email
+        run: |
+          echo "Parsed email: ${{ env.email }}"
+          

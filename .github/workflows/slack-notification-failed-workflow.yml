@@ -1,0 +1,39 @@
+name: Send Slack notification on failed workflow
+on:
+  workflow_call:
+    inputs:
+      repositoryName:
+        required: true
+        type: string
+      userName:
+        required: true
+        type: string
+      url:
+        required: true
+        type: string
+      pullRequest:
+        required: true
+        type: string
+    secrets:
+      UCP_WEBHOOK:
+        required: true
+
+
+jobs:
+  slack_PR_notification:
+    runs-on: [ self-hosted, Linux, X64, gcp, small ]
+    steps:
+      - name: Notify slack on build failure
+        id : myid
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://slack.com/api/chat.postMessage'
+          method: 'POST'    
+          bearerToken: xoxb-3716144366-4947006802613-apGiZtXkSCUulZCHFsQXBPia
+          data: '{"channel": "C031BPY5BKR","text": "*Failed build*\n*Pull Request Number:* ${{ inputs.pullRequest }}\n*Repository: * ${{ inputs.repositoryName }}\n*Pull Request by:* ${{ inputs.userName }}\n <https://github.com/Cision-Data/${{inputs.repositoryName}}/actions/runs/${{inputs.url}}|View Failed Action>"  }'
+      - name: Show Response
+        run: |
+          echo ${{ fromJson(steps.myid.outputs.response).ts }}
+        
+          
+        
