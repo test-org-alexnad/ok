@@ -10,7 +10,7 @@ env:
   GH_TOKEN: ${{ github.token }}
 jobs:
   slack_PR_notification:
-    runs-on: [ self-hosted, Linux, X64 ]
+    runs-on: [ self-hosted, macOS, X64  ]
     permissions: read-all
     if: ${{ github.base_ref == 'main'}}
     steps:
