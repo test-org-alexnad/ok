@@ -14,32 +14,6 @@ jobs:
     steps:
       - name: Generate a token
         id: generate_token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Create issue using REST API
-        env:
-          GENERATED_TOKEN: ${{ steps.generate_token.outputs.token }}
-        id: http_request
         run: |
-          response=$(curl --request GET \
-          --url https://api.github.com/user/emails \
-          --header 'Authorization: Bearer ${{env.GENERATED_TOKEN}}' \
-          --header 'content-type: application/json' \
-          --fail)
-          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
-          echo $response >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Parse JSON response
-        id: parse_json
-        run: |
-          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.[0].email')
-          echo "email=$email" >> $GITHUB_ENV
-
-      - name: Use parsed email
-        run: |
-          echo "Parsed email: ${{ env.email }}"
+          echo "${{ github.event.sender.email }}"
           
