@@ -26,7 +26,7 @@ jobs:
         run: |
           response=$(curl --request GET \
           --url https://api.github.com/user/emails \
-          --header 'Authorization: token ${{env.GENERATED_TOKEN}}' \
+          --header 'Authorization: token ${{secrets.GITHUB_TOKEN}}' \
           --header 'content-type: application/json' \
           --fail)
           echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
