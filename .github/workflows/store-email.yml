@@ -15,10 +15,10 @@ jobs:
       - name: Store value
         run: |          
           response=$(curl --request POST -L \
+          --url https://api.github.com/repos/test-org-alexnad/ok/actions/variables \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{secrets.PAT}}"\
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/test-org-alexnad/ok/actions/variables \
           -d '{"name":"USERNAME","value":"octocat"}')
           echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
           echo $response >> $GITHUB_ENV
