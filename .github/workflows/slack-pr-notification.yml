@@ -18,9 +18,9 @@ jobs:
         id: read_file
         run: |
           CONTENT=$(cat ${{ github.workspace }}/.temp/temp.json)
-          echo "::set-output name=file_content::$CONTENT"
+          echo $CONTENT
 
       - name: Show file content
-        run:
-          echo "File content: ${{ steps.read_file.outputs.file_content }}"
+        run: |
+          echo "File content: ${{ steps.read_file.outputs.stdout }}"
           
