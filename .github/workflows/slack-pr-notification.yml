@@ -11,26 +11,35 @@ jobs:
     runs-on: [ self-hosted, macOS, X64  ]
     if: ${{ github.base_ref == 'main'}}
     steps:
-
-      - name: Get variable
-        id: http_request
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get user's e-mail
+        id: user_email
         run: |
-          response=$(curl --request GET \
-          --url https://api.github.com/repos/test-org-alexnad/ok/actions/variables/${{github.actor}} \
-          --header 'Authorization: Bearer ${{secrets.PAT}}' \
-          --header 'content-type: application/json' \
-          --fail)
-          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
-          echo $response >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          git checkout origin/${{ github.head_ref }}
+          echo "$(git log -n 1 --pretty=format:%ae)"
 
-      - name: Parse JSON response
-        id: parse_json
-        run: |
-          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.email')
-          echo "email=$email" >> $GITHUB_ENV
+#      - name: Get variable
+#        id: http_request
+#        run: |
+#          response=$(curl --request GET \
+#          --url https://api.github.com/repos/test-org-alexnad/ok/actions/variables/${{github.actor}} \
+#          --header 'Authorization: Bearer ${{secrets.PAT}}' \
+#          --header 'content-type: application/json' \
+#          --fail)
+#          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
+#          echo $response >> $GITHUB_ENV
+#          echo "EOF" >> $GITHUB_ENV
+#
+#      - name: Parse JSON response
+#        id: parse_json
+#        run: |
+#          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.email')
+#          echo "email=$email" >> $GITHUB_ENV
+#
+#      - name: Use parsed email
+#        run: |
+#          echo "Parsed email: ${{ env.email }}"
 
-      - name: Use parsed email
-        run: |
-          echo "Parsed email: ${{ env.email }}"
-          

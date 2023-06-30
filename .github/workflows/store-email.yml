@@ -9,19 +9,12 @@ jobs:
     runs-on: [ self-hosted, macOS, X64  ]
     permissions: write-all
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # You need this to grab all of the branches.
+ # You need this to grab all of the branches.
 #      - name: Store value
 #        run: |
 #          response=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{secrets.PAT}}" --request POST --data '{"name": "${{github.actor}}", "email":"${{github.event.pusher.email}}"}' https://api.github.com/repos/test-org-alexnad/ok/actions/variables)
 #          echo "$response"
 
-      - name: Get user's e-mail
-        id: user_email
-        run: |
-          git checkout origin/${{ github.head_ref }}
-          echo "$(git log -n 1 --pretty=format:%ae)"
+
 
 
