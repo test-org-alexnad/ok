@@ -18,7 +18,3 @@ jobs:
       - name: Write file
         run: | 
           echo '{"email": "${{ github.event.pusher.email }}"}' > /.temp/temp.json
-
-      - name: print
-        run : |
-          echo "${{steps.user_email.outputs.user_email}}
