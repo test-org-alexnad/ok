@@ -14,13 +14,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Read file content
-        id: read_file
-        run: |
-          CONTENT=$(cat ${{ github.workspace }}/.temp/temp.json)
-          echo $CONTENT
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
 
-      - name: Show file content
+      - name: Read value from file
         run: |
-          echo "File content: ${{ steps.read_file.outputs.stdout }}"
+          # Read the value from the file
+          VALUE=$(cat my_value.txt)
+          echo "The value is: $VALUE"
           
