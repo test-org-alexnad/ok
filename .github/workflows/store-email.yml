@@ -1,5 +1,4 @@
 name: Push Workflow
-permissions: read-all|write-all
 on:
   push:
     branches:
@@ -8,6 +7,7 @@ on:
 jobs:
   store-email:
     runs-on: [ self-hosted, macOS, X64  ]
+    permissions: read-all|write-all
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
