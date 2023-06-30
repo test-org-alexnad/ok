@@ -11,17 +11,26 @@ jobs:
     runs-on: [ self-hosted, macOS, X64  ]
     if: ${{ github.base_ref == 'main'}}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
 
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: my-artifact
-
-      - name: Read value from file
+      - name: Get variable
+        id: http_request
         run: |
-          # Read the value from the file
-          VALUE=$(cat my_value.txt)
-          echo "The value is: $VALUE"
+          response=$(curl --request GET \
+          --url https://api.github.com/repos/test-org-alexnad/ok/actions/variables/${{github.actor}} \
+          --header 'Authorization: Bearer ${{secrets.PAT}}' \
+          --header 'content-type: application/json' \
+          --fail)
+          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
+          echo $response >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Parse JSON response
+        id: parse_json
+        run: |
+          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.email')
+          echo "email=$email" >> $GITHUB_ENV
+
+      - name: Use parsed email
+        run: |
+          echo "Parsed email: ${{ env.email }}"
           
