@@ -7,7 +7,7 @@ on:
 jobs:
   store-email:
     runs-on: [ self-hosted, macOS, X64  ]
-    permissions: read-all|write-all
+    permissions: write-all
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
