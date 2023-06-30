@@ -9,15 +9,15 @@ jobs:
     runs-on: [ self-hosted, macOS, X64  ]
 
     steps:
-      - name: Checks out repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # You need this to grab all of the branches.
-      - name: Get user's e-mail
-        id: user_email
-        run: |
-          git checkout /main/${{ github.head_ref }}
-          echo "::set-output name=user_email::$(git log -n 1 --pretty=format:%ae)"
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create temporary directory
+        run: mkdir /.temp
+
+      - name: Write file
+        run:
+          echo "{\"email\": \"${{ github.event.pusher.email }}\"}" > /.temp/${{ github.event.pusher.username }}.json
 
       - name: print
         run : |
