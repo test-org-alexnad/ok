@@ -16,7 +16,7 @@ jobs:
         run: mkdir /.temp
 
       - name: Write file
-        run:
+        run: | 
           echo '{"email": "${{ github.event.pusher.email }}"}' > /.temp/temp.json
 
       - name: print
