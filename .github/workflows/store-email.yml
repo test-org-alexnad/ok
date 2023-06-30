@@ -5,8 +5,8 @@ on:
       - '*'
 
 jobs:
-  permissions: write-all
   build:
+    permissions: write-all
     runs-on: [ self-hosted, macOS, X64  ]
     steps:
       - name: Checkout repository
