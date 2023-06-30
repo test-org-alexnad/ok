@@ -5,9 +5,9 @@ on:
       - '*'
 
 jobs:
+  permissions: write-all
   build:
     runs-on: [ self-hosted, macOS, X64  ]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
