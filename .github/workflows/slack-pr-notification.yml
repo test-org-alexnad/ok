@@ -13,37 +13,16 @@ jobs:
       {"user:email": "read"}
     if: ${{ github.base_ref == 'main'}}
     steps:
-      - name: Generate a token
-        id: generate_token
-        uses: tibdex/github-app-token@v1.8.0
-        with:
-          permissions: >-
-            {"members": "read"}
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: Create issue using REST API
-        env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-        id: http_request
+      - name: Read file content
+        id: read_file
         run: |
-          response=$(curl --request GET \
-          --url https://api.github.com/user/emails \
-          --header 'Authorization: Bearer ${{secrets.GITHUB_TOKEN}}' \
-          --header 'content-type: application/json' \
-          --fail)
-          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
-          echo $response >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          CONTENT=$(cat ${{ github.workspace }}/.temp/temp.json)
+          echo "::set-output name=file_content::$CONTENT"
 
-      - name: Parse JSON response
-        id: parse_json
-        run: |
-          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.[0].email')
-          echo "email=$email" >> $GITHUB_ENV
-
-      - name: Use parsed email
-        run: |
-          echo "Parsed email: ${{ env.email }}"
+      - name: Show file content
+        run:
+          echo "File content: ${{ steps.read_file.outputs.file_content }}"
           
