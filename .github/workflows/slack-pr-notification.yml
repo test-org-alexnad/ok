@@ -9,8 +9,6 @@ on:
 jobs:
   slack_PR_notification:
     runs-on: [ self-hosted, macOS, X64  ]
-    permissions: >-
-      {"user:email": "read"}
     if: ${{ github.base_ref == 'main'}}
     steps:
       - name: Checkout repository
