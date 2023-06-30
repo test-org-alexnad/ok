@@ -9,19 +9,7 @@ jobs:
     runs-on: [ self-hosted, macOS, X64  ]
 
     steps:
-      - name: Store email
-        id: http_request
-        run: |
-          response=$(curl --request GET \
-          --url https://api.github.com/repos/test-org-alexnad/ok/actions/secrets/kk \
-          --header 'Authorization: Bearer ${{secrets.POWERFUL_TOKEN}}' \
-          --header 'content-type: application/json' \
-          --fail)
-          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
-          echo $response >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          
 
       - name: Use parsed email
         run: |
-          echo "here: ${{ env.response }}"
+          echo "here: ${{ github.event.pusher.email }}"
