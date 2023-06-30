@@ -12,4 +12,5 @@ jobs:
 
       - name: Use parsed email
         run: |
-          echo "here: ${{ github.event.pusher.email }}"
+          git checkout remotes/origin/${{ github.head_ref }}zx
+          echo "here: $(git log -n 1 --pretty=format:%ae)"
