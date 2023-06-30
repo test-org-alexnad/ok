@@ -9,8 +9,16 @@ jobs:
     runs-on: [ self-hosted, macOS, X64  ]
 
     steps:
-
-      - name: Use parsed email
+      - name: Checks out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # You need this to grab all of the branches.
+      - name: Get user's e-mail
+        id: user_email
         run: |
           git checkout remotes/origin/${{ github.head_ref }}
-          echo "here: $(git log -n 1 --pretty=format:%ae)"
+          echo "::set-output name=user_email::$(git log -n 1 --pretty=format:%ae)"
+
+      - name: print
+        run : |
+          echo "${{steps.user_email.outputs.user_email}}
