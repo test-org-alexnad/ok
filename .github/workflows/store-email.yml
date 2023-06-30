@@ -14,7 +14,7 @@ jobs:
 
       - name: Store value
         run: |          
-          response=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{secrets.PAT}}" --request POST --data '{"name": "bruh", "value":"ok"}' https://api.github.com/repos/test-org-alexnad/ok/actions/variables)
+          response=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" --request POST --data '{"name": "githubtoken", "value":"kk"}' https://api.github.com/repos/test-org-alexnad/ok/actions/variables)
           echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
           echo $response >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
