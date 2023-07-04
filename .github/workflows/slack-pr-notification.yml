@@ -6,10 +6,11 @@ on:
         required: true
   pull_request:
     types: [ opened, reopened ]
+
 jobs:
-  slack_PR_notification:
-    runs-on: [ self-hosted, macOS, X64  ]
-    if: ${{ github.base_ref == 'main'}}
+  github_email:
+    runs-on: [self-hosted,Linux,X64,gcp,small]
+    if: ${{github.base_ref == 'main}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,30 +21,23 @@ jobs:
         id: user_email
         run: |
           echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
-          
-
-      - name: get
+  slack_PR_notification_with_github_user:
+    runs-on: [ self-hosted, Linux, X64, gcp, small ]
+    if: ${{ github.base_ref == 'main' && (env.email == *'@users.noreply.github.com'* || env.email == 'null'}}
+    steps:
+      - name: invalid email
         run: |
           echo "${{env.email}}"
-#      - name: Get variable
-#        id: http_request
-#        run: |
-#          response=$(curl --request GET \
-#          --url https://api.github.com/repos/test-org-alexnad/ok/actions/variables/${{github.actor}} \
-#          --header 'Authorization: Bearer ${{secrets.PAT}}' \
-#          --header 'content-type: application/json' \
-#          --fail)
-#          echo "MULTI_LINES_TEXT_ENV_VAR<<EOF" >> $GITHUB_ENV
-#          echo $response >> $GITHUB_ENV
-#          echo "EOF" >> $GITHUB_ENV
-#
-#      - name: Parse JSON response
-#        id: parse_json
-#        run: |
-#          email=$(echo '${{ env.MULTI_LINES_TEXT_ENV_VAR }}' | jq -r '.email')
-#          echo "email=$email" >> $GITHUB_ENV
-#
-#      - name: Use parsed email
-#        run: |
-#          echo "Parsed email: ${{ env.email }}"
-
+  slack_PR_notification_with_slack_user:
+    runs-on: [ self-hosted, Linux, X64, gcp, small ]
+    if: ${{ github.base_ref == 'main'}}
+    steps:
+      - name: Find Slack user
+        id: find-slack-user
+        uses: scribd/find-slack-user-action@v1
+        with:
+          email: ${{env.email}}
+          slack-token: ${{ secrets.SLACK_API_TOKEN }}
+      - name: show
+        run: |
+          echo "${{ steps.find-slack-user.outputs.username}}"
