@@ -25,7 +25,7 @@ jobs:
           
       - name: get
         run: |
-          echo "${{email}}"
+          echo "${{env.email}}"
 #      - name: Get variable
 #        id: http_request
 #        run: |
