@@ -8,9 +8,9 @@ on:
     types: [ opened, reopened ]
 
 jobs:
-  github_email:
-    runs-on: [self-hosted,Linux,X64,gcp,small]
-    if: ${{github.base_ref == 'main}}
+  slack_PR_notification:
+    runs-on: [ self-hosted, Linux, X64, gcp, small ]
+    if: ${{ github.base_ref == 'main'}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,23 +21,18 @@ jobs:
         id: user_email
         run: |
           echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
-  slack_PR_notification_with_github_user:
-    runs-on: [ self-hosted, Linux, X64, gcp, small ]
-    if: ${{ github.base_ref == 'main'}} && (${{env.email == *'@users.noreply'*}} || ${{env.email == 'null'}})
-    steps:
-      - name: invalid email
+      - name: Notify Slack on pull requests
+        if: ${{env.email == *"@users.noreply"*}} || ${{env.email == ""}}
         run: |
-          echo "${{env.email}}"
-  slack_PR_notification_with_slack_user:
-    runs-on: [ self-hosted, Linux, X64, gcp, small ]
-    if: ${{ github.base_ref == 'main'}}
-    steps:
+          echo "here"
       - name: Find Slack user
+        if: ${{env.email != *"@users.noreply"*}}
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
           email: ${{env.email}}
           slack-token: ${{ secrets.SLACK_API_TOKEN }}
-      - name: show
+      - name: Notify Slack on pull requests
+        if: ${{env.email != *"@users.noreply"*}}
         run: |
-          echo "${{ steps.find-slack-user.outputs.username}}"
+          echo "${{ steps.find-slack-user.outputs.username }}"
