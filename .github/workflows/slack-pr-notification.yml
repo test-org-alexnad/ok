@@ -22,11 +22,11 @@ jobs:
         run: |
           echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
       - name: Notify Slack on pull requests
-        if: ${{env.email == *"@users.noreply"*}} || ${{env.email == ""}}
+        if: ${{ contains(env.email, "@users.noreply") || env.email == "" }}
         run: |
           echo "here"
       - name: Find Slack user
-        if: ${{ contains(env.email, "@users.noreply") || env.email == "" }}
+        if: ${{ !contains(env.email, "@users.noreply")}}
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
