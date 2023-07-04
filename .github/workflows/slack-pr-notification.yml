@@ -15,17 +15,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Get user's e-mail
+      - name: Get user's email
         id: user_email
         run: |
-          git checkout origin/${{ github.head_ref }}
-          echo email=$(git log -n 1 --pretty=format:%ae)
+          git checkout origin/$GITHUB_REF
+          email=$(git log -n 1 --pretty=format:%ae)
           echo "email=$email" >> $GITHUB_ENV
-          
-          
-      - name: get
+
+      - name: Display email
         run: |
-          echo "${{env.email}}"
+          echo "Email: ${{ env.email }}"
 #      - name: Get variable
 #        id: http_request
 #        run: |
