@@ -9,7 +9,7 @@ on:
 
 jobs:
   slack_PR_notification:
-    runs-on: [ self-hosted, Linux, X64, gcp, small ]
+    runs-on: [ self-hosted, macOS, X64 ]
     if: ${{ github.base_ref == 'main'}}
     steps:
       - name: Checkout
