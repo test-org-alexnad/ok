@@ -26,13 +26,13 @@ jobs:
         run: |
           echo "here"
       - name: Find Slack user
-        if: ${{env.email != *"@users.noreply"*}}
+        if: ${{ contains(env.email, "@users.noreply") || env.email == "" }}
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
           email: ${{env.email}}
           slack-token: ${{ secrets.SLACK_API_TOKEN }}
       - name: Notify Slack on pull requests
-        if: ${{env.email != *"@users.noreply"*}}
+        if: ${{ !contains(env.email, "@users.noreply") || env.email == "" }}
         run: |
           echo "${{ steps.find-slack-user.outputs.username }}"
