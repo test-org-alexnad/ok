@@ -20,7 +20,7 @@ jobs:
         run: |
           git checkout origin/${{ github.head_ref }}
           echo email=$(git log -n 1 --pretty=format:%ae)
-          echo $email >> $GITHUB>ENV
+          echo $email >> $GITHUB_ENV
           
           
       - name: get
