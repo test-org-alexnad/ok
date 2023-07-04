@@ -23,7 +23,7 @@ jobs:
           echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
   slack_PR_notification_with_github_user:
     runs-on: [ self-hosted, Linux, X64, gcp, small ]
-    if: ${{ github.base_ref == 'main' && (env.email == *'@users.noreply.github.com'* || env.email == 'null'}}
+    if: ${{ github.base_ref == 'main' && (env.email == *'@users.noreply'* || env.email == 'null'}}
     steps:
       - name: invalid email
         run: |
