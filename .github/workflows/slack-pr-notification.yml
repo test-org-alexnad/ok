@@ -12,27 +12,27 @@ jobs:
     runs-on: [ self-hosted, macOS, X64 ]
     if: ${{ github.base_ref == 'main'}}
     steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#        with:
-#          ref: ${{ github.head_ref }}
-#          fetch-depth: 0
-#      - name: Get user's e-mail
-#        id: user_email
-#        run: |
-#          echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
-#      - name: Notify Slack on pull requests
-#        if: ${{ contains(env.email, '@users.noreply') || env.email == '' }}
-#        run: |
-#          echo "here"
-#          echo "${{env.email}}"
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Get user's e-mail
+        id: user_email
+        run: |
+          echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
       - name: Find Slack user
-        if: ${{ !contains(env.email, '@users.noreply')}}
+        if: ${{env.email != *"@users.noreply"*}}
         id: find-slack-user
         uses: scribd/find-slack-user-action@v1
         with:
-          email: 298349384798747472934743872374@gmail.com
+          email: ${{env.email}}
           slack-token: ${{ secrets.SLACK_API_TOKEN }}
-      - name: Notify Slack on pull requests
+      - name: Notify Slack on pull requests using Slack username
+        if: ${{env.email != *"@users.noreply"*}} && &{{steps.find-slack-user.outputs.found-user}}
         run: |
-          echo "${{ steps.find-slack-user.outputs.username }}"
+          echp "${{env.email}}"
+      - name: Notify Slack on pull requests using github username
+        if: ${{env.email == *"@users.noreply"*}} || ${{env.email == ""}} || !&{{steps.find-slack-user.outputs.found-user}}
+        run: |
+          echo "${{env.email}}"
