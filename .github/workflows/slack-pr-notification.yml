@@ -25,6 +25,7 @@ jobs:
         if: ${{ contains(env.email, '@users.noreply') || env.email == '' }}
         run: |
           echo "here"
+          echo "${{env.email}}
       - name: Find Slack user
         if: ${{ !contains(env.email, '@users.noreply')}}
         id: find-slack-user
