@@ -9,7 +9,7 @@ on:
 
 jobs:
   slack_PR_notification:
-    runs-on: [ self-hosted, macOS, X64 ]
+    runs-on: [ self-hosted, macOS, X64]
     if: ${{ github.base_ref == 'main'}}
     steps:
       - name: Checkout
@@ -29,10 +29,10 @@ jobs:
           email: ${{env.email}}
           slack-token: ${{ secrets.SLACK_API_TOKEN }}
       - name: Notify Slack on pull requests using Slack username
-        if: ${{env.email != *"@users.noreply"*}} && &{{steps.find-slack-user.outputs.found-user}}
+        if: ${{ !contains(env.email, '@users.noreply')}} && ${{steps.find-slack-user.outputs.found-user }}
         run: |
-          echp "${{env.email}}"
+          echo "${{env.email}}"
       - name: Notify Slack on pull requests using github username
-        if: ${{env.email == *"@users.noreply"*}} || ${{env.email == ""}} || !&{{steps.find-slack-user.outputs.found-user}}
+        if: ${{ contains(env.email, '@users.noreply') || env.email == '' || !steps.find-slack-user.outputs.found-user}}
         run: |
           echo "${{env.email}}"
