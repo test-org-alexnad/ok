@@ -25,7 +25,7 @@ jobs:
           
       - name: get
         run: |
-          echo "${{env.email}}"
+          echo "${{GITHUB_ENV.email}}"
 #      - name: Get variable
 #        id: http_request
 #        run: |
