@@ -19,13 +19,12 @@ jobs:
         id: user_email
         run: |
           git checkout origin/${{ github.head_ref }}
-          echo email=$(git log -n 1 --pretty=format:%ae)
-          echo "user_email=${email}" >> $GITHUB_OUTPUT
+          echo "email=$(git log -n 1 --pretty=format:%ae)" >> $GITHUB_ENV
           
 
       - name: get
         run: |
-          echo "${{steps.user_email.outputs.user_email}}"
+          echo "${{env.email}}"
 #      - name: Get variable
 #        id: http_request
 #        run: |
