@@ -32,6 +32,7 @@ jobs:
         if: ${{ !contains(env.email, '@users.noreply') && steps.find-slack-user.outputs.found-user}}
         run: |
           echo "${{env.email}}"
+          echo "${{steps.find-slack-user.outputs.found-user}}"
       - name: Notify Slack on pull requests using github username
         if: ${{ contains(env.email, '@users.noreply') || env.email == '' || !steps.find-slack-user.outputs.found-user}}
         run: |
