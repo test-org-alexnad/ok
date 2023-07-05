@@ -12,15 +12,15 @@ jobs:
     runs-on: [ self-hosted, macOS, X64]
     if: ${{ github.base_ref == 'main'}}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#        with:
+#          ref: ${{ github.head_ref }}
+#          fetch-depth: 0
       - name: Get user's e-mail
         id: user_email
         run: |
-          echo "email=$(git log -n 1 --pretty=format:%ae git log -n 1 --pretty=format:%ae origin/${{ github.head_ref }})" >> $GITHUB_ENV
+          echo "email=$(git log -n 1 --pretty=format:%ae origin/${{ github.head_ref }})" >> $GITHUB_ENV
       - name: Find Slack user
         if: ${{ !contains(env.email, '@users.noreply')}}
         id: find-slack-user
