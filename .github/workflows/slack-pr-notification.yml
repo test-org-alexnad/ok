@@ -20,7 +20,7 @@ jobs:
       - name: Get user's e-mail
         id: user_email
         run: |
-          echo "email=$(git log -n 1 --pretty=format:%ae origin/${{ github.head_ref }})" >> $GITHUB_ENV
+          echo "email=$(git log -n 1 --pretty=format:%ae remotes/origin/${{ github.head_ref }})" >> $GITHUB_ENV
       - name: Find Slack user
         if: ${{ !contains(env.email, '@users.noreply')}}
         id: find-slack-user
